@@ -238,7 +238,7 @@ footer a{color:inherit;margin:0 8px}
 </head>
 <body>
 
-<div class="topo" id="topo"><b>APROVEITE:</b> Kit Completo de <s>R$57,90</s> por <b>R$19</b></div>
+<div class="topo" id="topo"><b>APROVEITE ESSA PROMOÇÃO:</b> <span class="relogio" id="relogio">10:00</span></div>
 
 <!-- HERO -->
 <header class="hero">
@@ -528,6 +528,41 @@ var CHECKOUT = {
   function upd(){ var on = a && !b; bar.classList.toggle("on", on); bar.setAttribute("aria-hidden", on ? "false" : "true"); }
   new IntersectionObserver(function(e){ a = !e[0].isIntersecting; upd(); }).observe(hero);
   new IntersectionObserver(function(e){ b = e[0].isIntersecting; upd(); }).observe(planos);
+})();
+
+/* ===== TIMER DA PROMOÇÃO — 10 MINUTOS ===== */
+(function(){
+  var DURACAO = 10 * 60 * 1000;
+  var CHAVE = "fim_promocao_porcelana";
+  var relogio = document.getElementById("relogio");
+
+  if(!relogio) return;
+
+  var fim = parseInt(localStorage.getItem(CHAVE), 10);
+
+  if(!fim){
+    fim = Date.now() + DURACAO;
+    localStorage.setItem(CHAVE, String(fim));
+  }
+
+  function atualizarRelogio(){
+    var restante = Math.max(0, fim - Date.now());
+    var totalSegundos = Math.ceil(restante / 1000);
+    var minutos = Math.floor(totalSegundos / 60);
+    var segundos = totalSegundos % 60;
+
+    relogio.textContent =
+      String(minutos).padStart(2, "0") + ":" +
+      String(segundos).padStart(2, "0");
+
+    if(restante <= 0){
+      relogio.textContent = "00:00";
+      clearInterval(intervalo);
+    }
+  }
+
+  atualizarRelogio();
+  var intervalo = setInterval(atualizarRelogio, 1000);
 })();
 </script>
 </body>
